@@ -16,10 +16,12 @@ A set of Tampermonkey scripts for automatically detecting and filling out feedba
 
 First, you need to install the Tampermonkey browser extension:
 
-- [Chrome Web Store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-- [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
-- [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)
+- [Chrome Web Store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
+- [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)  
+- [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)  
 
+After installation, **make sure to toggle on Developer Mode in your browser's extensions page** if needed (especially when working with custom scripts).  
+For help, see the [Tampermonkey FAQ](https://www.tampermonkey.net/faq.php).
 
 
 ### 2. Install the Scripts
