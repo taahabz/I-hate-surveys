@@ -20,6 +20,8 @@ First, you need to install the Tampermonkey browser extension:
 - [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
 - [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)
 
+
+
 ### 2. Install the Scripts
 
 1. Click on the Tampermonkey icon in your browser and select "Create a new script"
