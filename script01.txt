@@ -1,0 +1,43 @@
+// ==UserScript==
+// @name         Qalam Auto-Fill All Surveys (Improved Detection)
+// @namespace    http://tampermonkey.net/
+// @version      1.5
+// @description  Automatically open and process unsubmitted Qalam surveys, including those with empty status fields.
+// @match        https://qalam.nust.edu.pk/student/qa/feedback*
+// @grant        none
+// ==/UserScript==
+
+(function () {
+    'use strict';
+
+    window.addEventListener('load', () => {
+        const base = "https://qalam.nust.edu.pk";
+
+        const surveyLinks = Array.from(document.querySelectorAll("ul.classCards")).filter(ul => {
+            const rawText = ul.innerText.replace(/\s+/g, ' ').trim().toLowerCase();
+
+            console.log(`🔎 Cleaned survey text: "${rawText}"`);
+
+            const hasCompleted = rawText.includes("completed") || rawText.includes("submitted");
+
+            // Include anything that is NOT marked completed/submitted
+            const include = !hasCompleted;
+
+            console.log(`👉 include: ${include}, completed: ${hasCompleted}`);
+
+            return include;
+        }).map(ul => {
+            const aTag = ul.querySelector("a[href*='/survey/']");
+            return aTag ? base + aTag.getAttribute("href") : null;
+        }).filter(link => link);
+
+        console.log("📝 Found", surveyLinks.length, "uncompleted surveys to attempt.");
+
+        if (surveyLinks.length > 0) {
+            localStorage.setItem("survey_queue", JSON.stringify(surveyLinks));
+            window.location.href = surveyLinks[0];
+        } else {
+            console.log("✅ No uncompleted surveys found.");
+        }
+    });
+})();

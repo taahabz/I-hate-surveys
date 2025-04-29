@@ -1,0 +1,117 @@
+// ==UserScript==
+// @name         Qalam NUST Survey Auto-Filler [Debug]
+// @namespace    http://tampermonkey.net/
+// @version      1.7
+// @description  Auto-fills NUST Qalam course feedback forms, adds a comment, and submits the form. Includes detailed debug logs.
+// @author       GPT
+// @match        https://qalam.nust.edu.pk/survey/*
+// @grant        none
+// ==/UserScript==
+
+(function () {
+    'use strict';
+
+    console.log("🟢 Qalam Auto-Fill Script STARTED");
+
+    // Helper function to simulate a delay
+    function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Main async function
+    async function autoFillSurvey() {
+        console.log("⏳ Waiting for page to fully load...");
+
+        await wait(1000); // Give DOM a moment to settle
+
+        const currentURL = window.location.href;
+        console.log("🌐 Current URL:", currentURL);
+
+        // Exit if already submitted or on a thank you page
+        if (currentURL.includes("thankyou") || currentURL.includes("submitted")) {
+            console.log("✅ Already on a thank you/submitted page. Exiting.");
+            return;
+        }
+
+        // Try to click the "Start Survey" button (it can be found dynamically)
+        const startBtn = document.querySelector('button.o_survey_start_button, button.btn-primary');
+        if (startBtn && startBtn.innerText.toLowerCase().includes("start")) {
+            console.log("🟩 Found Start Survey button. Clicking it...");
+            startBtn.click();
+
+            // Wait for the page to reload and display questions
+            console.log("⏳ Waiting for questions to load...");
+            await wait(3000); // Increased waiting time to ensure page reload
+        } else {
+            console.log("⚠️ No Start button found or already clicked.");
+        }
+
+        // Now check for the presence of survey questions (radio buttons)
+        const rows = document.querySelectorAll('tr.bg-white');
+        console.log(`📋 Found ${rows.length} matrix rows`);
+
+        if (rows.length === 0) {
+            console.warn("❌ No matrix rows found! Are you sure questions have loaded?");
+        }
+
+        for (const [index, row] of rows.entries()) {
+            const radios = row.querySelectorAll('input[type="radio"]');
+            if (radios.length > 0) {
+                radios[0].checked = true;
+                radios[0].dispatchEvent(new Event('change', { bubbles: true }));
+                console.log(`✅ Selected first option for row ${index + 1}`);
+            } else {
+                console.warn(`⚠️ No radio buttons found in row ${index + 1}`);
+            }
+        }
+
+        // Fill the comment field with "Good" if it's present
+        const commentField = document.querySelector('textarea.form-control.o_survey_question_text_box');
+        if (commentField) {
+            console.log("📝 Comment field found. Filling in 'Good'...");
+            commentField.value = "Good";
+            commentField.dispatchEvent(new Event('input', { bubbles: true })); // Trigger input event for dynamic forms
+        } else {
+            console.warn("⚠️ No comment field found.");
+        }
+
+        await wait(500); // Pause before submitting
+
+        // Ensure the comment field validation is triggered (if applicable)
+        const validateCommentField = document.querySelector('textarea.form-control.o_survey_question_text_box');
+        if (validateCommentField) {
+            validateCommentField.dispatchEvent(new Event('blur', { bubbles: true })); // Ensure blur event is triggered to validate the field
+        }
+
+        // Try to click the Submit button (dynamically)
+        const submitBtn = document.querySelector('button[type="submit"], .o_survey_submit');
+        if (submitBtn) {
+            console.log("🟢 Found Submit button. Clicking it...");
+            submitBtn.click();
+        } else {
+            console.log("⚠️ Submit button not found. Trying Ctrl + Enter to submit...");
+            // Simulate Ctrl + Enter to submit the form
+            const event = new KeyboardEvent('keydown', {
+                key: 'Enter',
+                ctrlKey: true,
+                bubbles: true,
+                cancelable: true,
+            });
+            document.dispatchEvent(event);
+        }
+
+        // After survey submission, navigate back to the All Surveys page
+        setTimeout(() => {
+            console.log("🔙 Navigating back to the All Surveys page...");
+            window.location.href = 'https://qalam.nust.edu.pk/student/qa/feedback';
+        }, 2000); // 2 seconds delay to ensure the submission happens first
+    }
+
+    // Catch all errors
+    window.onerror = function (msg, src, lineno, colno, error) {
+        console.error("💥 ERROR:", msg, "at", lineno + ":" + colno);
+    };
+
+    // Start the process after a slight delay
+    setTimeout(autoFillSurvey, 1000);
+})();
