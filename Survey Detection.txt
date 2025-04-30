@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Qalam Auto-Fill All Surveys (Improved Detection)
+// @name         Qalam Auto-Fill All Surveys (Fixed Detection)
 // @namespace    http://tampermonkey.net/
-// @version      1.5
-// @description  Automatically open and process unsubmitted Qalam surveys, including those with empty status fields.
+// @version      1.6
+// @description  Opens all unsubmitted Qalam surveys and skips only the ones marked as Completed.
 // @match        https://qalam.nust.edu.pk/student/qa/feedback*
 // @grant        none
 // ==/UserScript==
@@ -14,16 +14,16 @@
         const base = "https://qalam.nust.edu.pk";
 
         const surveyLinks = Array.from(document.querySelectorAll("ul.classCards")).filter(ul => {
-            const rawText = ul.innerText.replace(/\s+/g, ' ').trim().toLowerCase();
+            const items = Array.from(ul.querySelectorAll("li .md-list-content .md-list-heading"));
+            const statusItem = items.find(el => el.nextElementSibling && el.nextElementSibling.textContent.trim().toLowerCase() === "status");
 
-            console.log(`🔎 Cleaned survey text: "${rawText}"`);
+            const status = statusItem ? statusItem.textContent.trim().toLowerCase() : "";
 
-            const hasCompleted = rawText.includes("completed") || rawText.includes("submitted");
+            console.log(`🔎 Extracted status: "${status}"`);
 
-            // Include anything that is NOT marked completed/submitted
-            const include = !hasCompleted;
+            const include = status === "not submitted" || status === "";
 
-            console.log(`👉 include: ${include}, completed: ${hasCompleted}`);
+            console.log(`👉 include: ${include}, status: "${status}"`);
 
             return include;
         }).map(ul => {
