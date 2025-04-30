@@ -20,7 +20,7 @@ First, you need to install the Tampermonkey browser extension:
 - [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)  
 - [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)  
 
-After installation, **make sure to toggle on Developer Mode in your browser's extensions page**  
+After installation, **make sure to toggle on Developer Mode in your browser's extensions page**  and pin tampermonkey on your browser 
 
 For help, see the [Tampermonkey FAQ](https://www.tampermonkey.net/faq.php).
 
